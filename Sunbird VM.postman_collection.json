@@ -54,7 +54,17 @@
 					"name": "Get Schema With Schema ID",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{CREDSCHEMA_BASE_URL}}/credential-schema/{{cred_schema_id}}",
+							"host": [
+								"{{CREDSCHEMA_BASE_URL}}"
+							],
+							"path": [
+								"credential-schema",
+								"{{cred_schema_id}}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -69,7 +79,7 @@
 									"let jsonData = pm.response.json();",
 									"console.log(\"jsonData\",jsonData)",
 									"pm.collectionVariables.set(\"vc_id\", jsonData?.credential?.id);",
-									"pm.collectionVariables.set(\"vc\",jsonData?.credential)"
+									"pm.collectionVariables.set(\"vc\", JSON.stringify(jsonData?.credential));"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -81,7 +91,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"credential\": {\n    \"@context\": [\n      \"https://www.w3.org/2018/credentials/v1\"\n     ,  \"http://10.15.121.167:1111/vc-context.json\"\n    ],\n    \"type\": [\n      \"VerifiableCredential\",\n      \"InsuranceCredential\"\n    ],\n    // \"issuer\": \"did:test123:6e0a3225-56a4-4f7c-84dd-397760f97d33\",\n    \"expirationDate\": \"2023-02-08T11:56:27.259Z\",\n    \"credentialSubject\": {\n    //   \"id\": \"did:test123:6e0a3225-56a4-4f7c-84dd-397760f97d33\",\n    //   \"type\": \"Person\",\n      \"grade\": \"A\",\n      \"programme\": \"BTECH\",\n      \"certifyingInstitute\": \"certifyingInstitute Testing\",\n      \"evaluatingInstitute\": \"evaluatingInstitute Tesing\"\n\n    }\n  },\n  \"credentialSchemaId\": \"{{cred_schema_id}}\",\n  \"credentialSchemaVersion\": \"1.0.0\",\n  \"tags\": [\n    \"tag1\",\n    \"tag2\"\n  ]\n}\n\n\n\n",
+							"raw": "{\n  \"credential\": {\n    \"@context\": [\n      \"https://www.w3.org/2018/credentials/v1\"\n    //  ,  \"http://10.15.121.167:1111/vc-context.json\"\n    ],\n    \"type\": [\n      \"VerifiableCredential\",\n      \"InsuranceCredential\"\n    ],\n    // \"issuer\": \"did:test123:6e0a3225-56a4-4f7c-84dd-397760f97d33\",\n    \"expirationDate\": \"2023-02-08T11:56:27.259Z\",\n    \"credentialSubject\": {\n    //   \"id\": \"did:test123:6e0a3225-56a4-4f7c-84dd-397760f97d33\",\n    //   \"type\": \"Person\",\n      \"grade\": \"A\",\n      \"programme\": \"BTECH\",\n      \"certifyingInstitute\": \"certifyingInstitute Testing\",\n      \"evaluatingInstitute\": \"evaluatingInstitute Tesing\"\n\n    }\n  },\n  \"credentialSchemaId\": \"{{cred_schema_id}}\",\n  \"credentialSchemaVersion\": \"1.0.0\",\n  \"tags\": [\n    \"tag1\",\n    \"tag2\"\n  ]\n}\n\n\n\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -105,15 +115,45 @@
 					"name": "Verify Crdential By ID",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{CREDENTIAL_BASE_URL}}/credentials/{{vc_id}}/verify",
+							"host": [
+								"{{CREDENTIAL_BASE_URL}}"
+							],
+							"path": [
+								"credentials",
+								"{{vc_id}}",
+								"verify"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Verify By Vc",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"verifiableCredential\":\n    {\n        \"id\": \"stmt:cord:s3ecvzz1Rw73YadwP9xC4EBg5Tw3ymMwGP6y3TD1mUR5URXiT\",\n        \"type\": [\n            \"VerifiableCredential\"\n        ],\n        \"proof\": [\n            {\n                \"type\": \"Ed25519Signature2020\",\n                \"created\": \"Tue Oct 01 2024 06:38:37 GMT+0000 (Coordinated Universal Time)\",\n                \"proofValue\": \"z5m6X8AJR2BYgSyX7DajoVHDpcyA4kEzsoLR7rNs12K4yVhEHu3iyBSDEskWJD1UVRadjoCqe8zmsECN1kQeLKjdT\",\n                \"proofPurpose\": \"sr25519\",\n                \"verificationMethod\": \"did:cord:3zKcL2oAsvZZwFA5uPxtysk5jsai2TGx4AvrpJcBYmAwzGyN#0xaebd479b52b61ec4954a5478e6285bff0a5508b53f30ee5c552061efd4c89842\"\n            },\n            {\n                \"type\": \"CordProof2024\",\n                \"digest\": \"0xf6a468edec8b03c449c59ec14500e76a3ca384d0100d6c8d421c7bc5d6a8b9cf\",\n                \"spaceUri\": \"space:cord:c35h1XGuUXDHwtJTre7dwsb7KqZM5DWYA4kpPRuSx6BZJnXTg\",\n                \"schemaUri\": \"schema:cord:s34mEqHCNFDEMuboMuZk4tUTNaoAWmJREHMYACiEoGgZVVpwz\",\n                \"creatorUri\": \"did:cord:3zKcL2oAsvZZwFA5uPxtysk5jsai2TGx4AvrpJcBYmAwzGyN\",\n                \"elementUri\": \"stmt:cord:s3ecvzz1Rw73YadwP9xC4EBg5Tw3ymMwGP6y3TD1mUR5URXiT:f6a468edec8b03c449c59ec14500e76a3ca384d0100d6c8d421c7bc5d6a8b9cf\",\n                \"identifier\": \"stmt:cord:s3ecvzz1Rw73YadwP9xC4EBg5Tw3ymMwGP6y3TD1mUR5URXiT\",\n                \"genesisHash\": \"0x99f72c0a4e8ec69365bb2b480302b719465d838cfefa9db0c5a91eed5378285c\"\n            },\n            {\n                \"type\": \"CordSDRProof2024\",\n                \"hashes\": [\n                    \"0x3103e44ce3610511ff84c458fba5ddcf27dcf733e2170b5c3319f8fb927a9282\",\n                    \"0x638b9e8774223e29ea3fa57f942421b1f17b94db26e952ad18bd8db2820d7a55\",\n                    \"0x715952f66098527922c536af7f6085042abeaa7fc1574985b96dfa60f89ea7b7\",\n                    \"0x888101b6b192f340273fbe6236409c35c0422bc30a308cbbe6b65e93979efa67\",\n                    \"0xee7e3f4cee8577c9fd67e1e07ed48d95786ff96de04e1e082b9005e39367ef18\"\n                ],\n                \"nonceMap\": {\n                    \"0x539a5ba21605a27159f3a9542dbfecda0a9136b2bf14285bf8ba446eccc059a7\": \"b91ead07-9403-4a1b-a9f7-0bdc8c8b0a86\",\n                    \"0x676a5c01a8a973b3fe050d2a11bc574ef6a4bd17746b654ac2f42debb0347e45\": \"28318f2e-9340-4d32-aea3-2b55193e05bf\",\n                    \"0x8011f4ba3f488374e5285c25af3b182452154284945c8754225ec7a53745c7d1\": \"2d93fb8d-3b4b-4ce3-b2db-6b67ac8d978c\",\n                    \"0xa03ad234db3fdd2e6a6140597d7d4f2ec2e95a8674b9cb69d6a85c225b7e03da\": \"b99d18cb-76ef-4aec-99ea-00822e8c01b6\",\n                    \"0xe9cd67aa3d9f4236ff2cdd015abd6a5330f644207994118c7a766d08f509a66b\": \"69c700f8-381f-41f4-82a0-dd3479786c2d\"\n                },\n                \"genesisHash\": \"0x99f72c0a4e8ec69365bb2b480302b719465d838cfefa9db0c5a91eed5378285c\",\n                \"defaultDigest\": \"0xc330f3084848a31e6ee9fa8290ec5989e5d79423076fda36a6723c4bafa4140f\"\n            }\n        ],\n        \"issuer\": \"did:cord:3zKcL2oAsvZZwFA5uPxtysk5jsai2TGx4AvrpJcBYmAwzGyN\",\n        \"@context\": [\n            \"https://www.w3.org/2018/credentials/v1\",\n            \"https://cord.network/2023/cred/v1\"\n        ],\n        \"metadata\": {},\n        \"validFrom\": \"2024-10-01T06:38:37.336Z\",\n        \"validUntil\": \"2025-10-01T06:38:37.336Z\",\n        \"issuanceDate\": \"2024-10-01T06:38:37.336Z\",\n        \"credentialHash\": \"0xf6a468edec8b03c449c59ec14500e76a3ca384d0100d6c8d421c7bc5d6a8b9cf\",\n        \"credentialSchema\": {\n            \"$id\": \"schema:cord:s34mEqHCNFDEMuboMuZk4tUTNaoAWmJREHMYACiEoGgZVVpwz\",\n            \"type\": \"object\",\n            \"title\": \"Proof-of-Academic-Evaluation-Credential-1.0:94f71fd0-b95f-4779-9304-4c291e892f8f\",\n            \"$schema\": \"http://cord.network/draft-01/schema#\",\n            \"required\": [\n                \"certifyingInstitute\",\n                \"evaluatingInstitute\",\n                \"grade\",\n                \"programme\"\n            ],\n            \"properties\": {\n                \"grade\": {\n                    \"type\": \"string\"\n                },\n                \"programme\": {\n                    \"type\": \"string\"\n                },\n                \"certifyingInstitute\": {\n                    \"type\": \"string\"\n                },\n                \"evaluatingInstitute\": {\n                    \"type\": \"string\"\n                }\n            },\n            \"additionalProperties\": false\n        },\n        \"credentialSubject\": {\n            \"id\": \"did:cord:3zKcL2oAsvZZwFA5uPxtysk5jsai2TGx4AvrpJcBYmAwzGyN\",\n            \"grade\": \"A\",\n            \"@context\": {\n                \"vocab\": \"schema:cord:s34mEqHCNFDEMuboMuZk4tUTNaoAWmJREHMYACiEoGgZVVpwz#\"\n            },\n            \"programme\": \"BTECH\",\n            \"certifyingInstitute\": \"certifyingInstitute Testing\",\n            \"evaluatingInstitute\": \"evaluatingInstitute Tesing\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CREDENTIAL_BASE_URL}}/credentials/verify",
+							"host": [
+								"{{CREDENTIAL_BASE_URL}}"
+							],
+							"path": [
+								"credentials",
+								"verify"
+							]
+						}
 					},
 					"response": []
 				}
